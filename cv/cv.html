@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>CV - Konare Habib</title>
+<!--
+  CV de Konare Habib (source).
+  Modifie ce fichier, puis régénère le PDF avec :  npm run cv
+  Le PDF est créé dans public/cv.pdf (bouton « Télécharger mon CV » du portfolio).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  @page { size: A4; margin: 0; }
+  :root {
+    --side: #121a30;
+    --side-text: #d7dcea;
+    --side-muted: #8f9ab5;
+    --accent: #f07c12;
+    --accent-2: #129c6a;
+    --text: #1b2236;
+    --muted: #5a6378;
+    --line: #e3e7ef;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fff; }
+  body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: var(--text);
+    font-size: 9pt;
+    line-height: 1.4;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    display: grid;
+    grid-template-columns: 70mm 1fr;
+    overflow: hidden;
+  }
+  h1, h2, h3 { font-family: 'Poppins', 'Segoe UI', sans-serif; }
+  ul { list-style: none; }
+
+  /* ---- Colonne gauche ---- */
+  .side {
+    background: var(--side);
+    color: var(--side-text);
+    padding: 10mm 7mm 8mm;
+    display: flex;
+    flex-direction: column;
+    gap: 4.6mm;
+  }
+  .photo {
+    width: 34mm;
+    height: 34mm;
+    margin: 0 auto;
+    border-radius: 50%;
+    padding: 1.2mm;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1mm solid var(--side);
+    display: block;
+  }
+  .side h2 {
+    font-size: 9.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #fff;
+    padding-bottom: 1.6mm;
+    margin-bottom: 2.6mm;
+    border-bottom: 0.4mm solid rgba(255,255,255,0.14);
+    position: relative;
+  }
+  .side h2::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -0.4mm;
+    width: 10mm; height: 0.6mm;
+    background: var(--accent);
+  }
+  .contact li {
+    display: grid;
+    grid-template-columns: 5mm 1fr;
+    gap: 1.5mm;
+    align-items: start;
+    margin-bottom: 1.8mm;
+    font-size: 8.6pt;
+    overflow-wrap: anywhere;
+  }
+  .contact svg { width: 3.6mm; height: 3.6mm; margin-top: 0.4mm; fill: var(--accent); }
+  .contact a { color: var(--side-text); text-decoration: none; }
+  .skill-group { margin-bottom: 1.8mm; }
+  .skill-group h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--side-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1mm;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.2mm; }
+  .chips li {
+    font-size: 7.9pt;
+    padding: 0.5mm 2.2mm;
+    border-radius: 3mm;
+    background: rgba(255,255,255,0.08);
+    border: 0.25mm solid rgba(255,255,255,0.12);
+  }
+  .bars li { margin-bottom: 2mm; font-size: 8.6pt; }
+  .bars .row { display: flex; justify-content: space-between; }
+  .bars .row span:last-child { color: var(--side-muted); font-size: 8pt; }
+  .bar { height: 1.3mm; border-radius: 1mm; background: rgba(255,255,255,0.12); margin-top: 0.8mm; }
+  .bar i { display: block; height: 100%; border-radius: 1mm; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .two h2 { font-size: 8.5pt; letter-spacing: 0.08em; }
+  .dots li { font-size: 8.6pt; margin-bottom: 1.1mm; padding-left: 3.5mm; position: relative; }
+  .dots li::before {
+    content: ''; position: absolute; left: 0; top: 1.7mm;
+    width: 1.4mm; height: 1.4mm; border-radius: 50%; background: var(--accent-2);
+  }
+
+  /* ---- Colonne droite ---- */
+  .main { padding: 11mm 10mm 8mm 9mm; display: flex; flex-direction: column; gap: 4mm; }
+  .head h1 {
+    font-size: 23pt;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .head h1 span { color: var(--accent); }
+  .head .role {
+    margin-top: 1.6mm;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 11.5pt;
+    color: var(--accent-2);
+  }
+  .head .target {
+    display: inline-block;
+    margin-top: 2.2mm;
+    font-size: 8.6pt;
+    font-weight: 600;
+    padding: 0.8mm 3mm;
+    border-radius: 3mm;
+    background: #fff2e6;
+    color: #b45708;
+  }
+  .main h2 {
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 2.5mm;
+    margin-bottom: 2mm;
+  }
+  .main h2::before {
+    content: '';
+    width: 2.2mm; height: 2.2mm; border-radius: 0.6mm;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .main h2::after { content: ''; flex: 1; height: 0.3mm; background: var(--line); }
+  .profile p { color: var(--muted); text-align: justify; }
+  .entry { margin-bottom: 2.2mm; }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-top { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
+  .entry h3 { font-size: 10pt; font-weight: 700; }
+  .date { font-size: 8.3pt; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .place { font-weight: 600; color: var(--accent-2); font-size: 9pt; }
+  .entry ul { margin-top: 1.2mm; }
+  .entry ul li { position: relative; padding-left: 3.6mm; margin-bottom: 0.7mm; color: var(--muted); }
+  .entry ul li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-size: 8pt; top: 0.2mm; }
+  .entry p.desc { color: var(--muted); margin-top: 0.6mm; }
+  .tech { margin-top: 1mm; font-size: 8.2pt; color: var(--text); }
+  .tech b { color: var(--accent-2); font-weight: 600; }
+  .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2mm 3.5mm; }
+  .project { border: 0.3mm solid var(--line); border-left: 0.9mm solid var(--accent); border-radius: 1.6mm; padding: 2.2mm 3mm; }
+  .project h3 { font-size: 9.6pt; }
+  .project p { color: var(--muted); font-size: 8.2pt; margin-top: 0.6mm; }
+  .tag { font-size: 7pt; font-weight: 700; color: #fff; background: var(--accent-2); padding: 0.2mm 1.6mm; border-radius: 2mm; margin-left: 1.2mm; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ================= COLONNE GAUCHE ================= -->
+  <aside class="side">
+    <div class="photo"><img src="photo-cv.jpg" alt="Photo de Konare Habib" /></div>
+
+    <section>
+      <h2>Contact</h2>
+      <ul class="contact">
+        <li><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg><span>+225 07 87 58 23 45</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg><a href="mailto:konarehabib4@gmail.com">konarehabib4@gmail.com</a></li>
+        <li><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>Attécoubé, Abidjan<br/>Côte d’Ivoire</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg><a href="https://github.com/konarehabib4-netizen">github.com/konarehabib4-netizen</a></li>
+        <li><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.3 18.3H5.7V9.8h2.6zM7 8.6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm11.3 9.7h-2.6v-4.1c0-1-.02-2.3-1.4-2.3s-1.6 1.1-1.6 2.2v4.2H10V9.8h2.5v1.2a2.7 2.7 0 0 1 2.5-1.4c2.6 0 3.1 1.7 3.1 4z"/></svg><a href="https://www.linkedin.com/in/konare-habib-25a421326">linkedin.com/in/konare-habib-25a421326</a></li>
+        <!-- PORTFOLIO : décommente cette ligne et mets l'adresse quand le site est en ligne
+        <li><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4a14 14 0 0 1 1.9 4h-3.8A14 14 0 0 1 12 4zM4.3 14a8 8 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4zm.8 2h2.9a15.7 15.7 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16zM8 8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zm4 12a14 14 0 0 1-1.9-4h3.8A14 14 0 0 1 12 20zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4zm.3 5.6a15.7 15.7 0 0 0 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.7-5.6a16.5 16.5 0 0 0 0-4h3.4a8 8 0 0 1 0 4z"/></svg><a href="https://ADRESSE-DU-PORTFOLIO">ADRESSE-DU-PORTFOLIO</a></li>
+        -->
+      </ul>
+    </section>
+
+    <section>
+      <h2>Compétences</h2>
+      <div class="skill-group"><h3>Web &amp; Back-end</h3>
+        <ul class="chips"><li>React</li><li>JavaScript</li><li>HTML / CSS</li><li>Node.js</li><li>Express</li><li>API REST</li></ul></div>
+      <div class="skill-group"><h3>Mobile</h3>
+        <ul class="chips"><li>Kotlin</li><li>Flutter</li><li>Android</li></ul></div>
+      <div class="skill-group"><h3>Desktop</h3>
+        <ul class="chips"><li>C#</li><li>.NET</li></ul></div>
+      <div class="skill-group"><h3>Bases de données</h3>
+        <ul class="chips"><li>SQL</li><li>MySQL</li><li>MongoDB</li><li>Firebase</li></ul></div>
+      <div class="skill-group"><h3>Outils &amp; autres</h3>
+        <ul class="chips"><li>Git</li><li>Postman</li><li>VS Code</li><li>Agents IA</li><li>Support informatique</li></ul></div>
+    </section>
+
+    <section>
+      <h2>Langues</h2>
+      <ul class="bars">
+        <li><div class="row"><span>Français</span><span>Courant</span></div><div class="bar"><i style="width:100%"></i></div></li>
+        <li><div class="row"><span>Anglais</span><span>Intermédiaire</span></div><div class="bar"><i style="width:55%"></i></div></li>
+      </ul>
+    </section>
+
+    <div class="two">
+      <section>
+      <h2>Qualités</h2>
+      <ul class="dots">
+        <li>Travail en équipe</li>
+        <li>Autonomie</li>
+        <li>Curiosité</li>
+        <li>Ponctualité</li>
+      </ul>
+    </section>
+
+      <section>
+      <h2>Centres d’intérêt</h2>
+      <ul class="dots">
+        <li>Veille technologique</li>
+        <li>Football</li>
+      </ul>
+    </section>
+    </div>
+  </aside>
+
+  <!-- ================= COLONNE DROITE ================= -->
+  <main class="main">
+    <header class="head">
+      <h1>KONARE <span>Habib</span></h1>
+      <p class="role">Développeur d’applications Web, Mobile &amp; Desktop</p>
+      <p class="target">Recherche un stage en développement d’applications</p>
+    </header>
+
+    <section class="profile">
+      <h2>Profil</h2>
+      <p>
+        Étudiant en Licence 3 Développement d’Applications et Systèmes d’Information à l’ESATIC,
+        titulaire d’un BTS IDA. Fort d’un an de stage chez Côte d’Ivoire Énergies, je conçois des
+        applications web (React, Node.js), mobiles (Kotlin, Flutter) et desktop (C#). Rigoureux et
+        curieux, je souhaite rejoindre une équipe de développement pour contribuer à des projets
+        concrets et continuer à progresser.
+      </p>
+    </section>
+
+    <section>
+      <h2>Expérience professionnelle</h2>
+      <div class="entry">
+        <div class="entry-top">
+          <h3>Stagiaire en informatique</h3>
+          <span class="date">Févr. 2025 – Janv. 2026 · 1 an</span>
+        </div>
+        <p class="place">Côte d’Ivoire Énergies (CI-ENERGIES), Abidjan</p>
+        <ul>
+          <li>Support informatique : installation et configuration des imprimantes, assistance quotidienne aux agents de l’entreprise.</li>
+          <li>Projet d’électrification rurale : conception des maquettes et de l’interface web.</li>
+          <li>Participation au projet interne de développement des applications de l’entreprise.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Projets</h2>
+      <div class="projects">
+        <div class="project">
+          <h3>Cota : application de tontine</h3>
+          <p>Gestion des membres, cotisations, rappels et historique. API REST Node.js / Express testée avec Postman.</p>
+          <p class="tech"><b>Flutter · Node.js · Express · MySQL</b></p>
+        </div>
+        <div class="project">
+          <h3>Gaz Proximité</h3>
+          <p>Application mobile de localisation des points de vente de gaz : carte, recherche, commande et notifications.</p>
+          <p class="tech"><b>Kotlin · Android</b></p>
+        </div>
+        <div class="project">
+          <h3>Projet APP ESATIC <span class="tag">EN COURS</span></h3>
+          <p>Technologies numériques intelligentes au service de la prévention et de la gestion des risques d’inondation en Côte d’Ivoire.</p>
+          <p class="tech"><b>Travail en équipe</b></p>
+        </div>
+        <div class="project">
+          <h3>Agent IA</h3>
+          <p>Conception d’un agent d’intelligence artificielle basé sur Hermes et propulsé par le modèle Claude, pour automatiser des tâches.</p>
+          <p class="tech"><b>Hermes · Claude · IA</b></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Formation</h2>
+      <div class="entry">
+        <div class="entry-top">
+          <h3>Licence 3 Développement d’Applications et Systèmes d’Information</h3>
+          <span class="date">2026 – 2027</span>
+        </div>
+        <p class="place">ESATIC, Abidjan</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <h3>BTS Informatique Développeur d’Applications (IDA)</h3>
+          <span class="date">2024</span>
+        </div>
+        <p class="place">Pigier Côte d’Ivoire</p>
+        <p class="desc">Diplôme obtenu en 2024, soutenance en décembre 2025.</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <h3>Baccalauréat série D</h3>
+          <span class="date">2022</span>
+        </div>
+        <p class="place">Lycée Moderne Adjamé Harris, Abidjan</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Certifications</h2>
+      <div class="entry">
+        <div class="entry-top">
+          <h3>Formations en ligne OpenClassrooms</h3>
+        </div>
+        <p class="desc">Développement web et programmation.</p>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
