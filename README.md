@@ -1,5 +1,7 @@
 # Mon portfolio (React + Vite)
 
+🌐 **En ligne : https://konare-habib.vercel.app**
+
 Portfolio de développeur : Accueil, À propos, Compétences, Projets, Parcours, Contact.
 Design « terminal / code » : terminal interactif dans l'accueil (tapez `help`, `projets`, `cv`, `embauche`…), compétences en objet JavaScript,
 parcours en `git log`. Mode sombre/clair, responsive (mobile), animations légères.
@@ -42,7 +44,6 @@ npm run cv       # crée public/cv.pdf, téléchargeable depuis le bouton du por
 ```
 
 Pour voir le CV avant de générer le PDF, ouvre `cv/cv.html` dans ton navigateur.
-Quand le portfolio est en ligne, décommente la ligne « PORTFOLIO » dans `cv/cv.html` et mets son adresse.
 
 ## 3. Structure du projet
 
