@@ -29,7 +29,7 @@ export const profile = {
   ],
   stats: [
     { value: '1 an', label: 'de stage chez Côte d’Ivoire Énergies' },
-    { value: '4', label: 'projets réalisés ou en cours' },
+    { value: '5', label: 'projets réalisés ou en cours' },
     { value: 'Bac+3', label: 'en cours à l’ESATIC' },
   ],
 
@@ -51,7 +51,7 @@ export const profile = {
       description:
         'Application mobile pour trouver un point de vente de gaz à proximité de l’école : carte des vendeurs, recherche, commande en ligne et notifications.',
       tags: ['Kotlin', 'Android'],
-      github: '',
+      github: 'https://github.com/konarehabib4-netizen/gazproximiter',
       demo: '',
     },
     {
@@ -60,6 +60,14 @@ export const profile = {
         'Application mobile de tontine : gestion des membres, suivi des cotisations, rappels de paiement et historique. API REST en Node.js / Express testée avec Postman, données stockées dans MySQL.',
       tags: ['Flutter', 'Node.js', 'Express', 'MySQL', 'Postman'],
       github: '',
+      demo: '',
+    },
+    {
+      title: 'LoyerFacile',
+      description:
+        'Application web de gestion locative pour propriétaires : immeubles, logements, locataires et suivi des paiements de loyer. Front-end React (Vite), API REST Node.js / Express sécurisée par JWT, base de données MySQL.',
+      tags: ['En cours', 'React', 'Node.js', 'Express', 'MySQL', 'JWT'],
+      github: 'https://github.com/konarehabib4-netizen/loyerfacile',
       demo: '',
     },
     {
