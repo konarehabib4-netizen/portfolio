@@ -45,6 +45,7 @@ export const profile = {
 
   // --- Projets ---------------------------------------------------------
   // Pour chaque projet : github et demo = URL complète, ou '' pour masquer.
+  // etude (facultatif) = identifiant d'une étude de cas écrite dans src/data/etudes.js.
   projects: [
     {
       title: 'Gaz Proximité',
@@ -69,6 +70,7 @@ export const profile = {
       tags: ['React', 'Node.js', 'Express', 'MySQL', 'JWT', 'PWA', 'Vercel'],
       github: 'https://github.com/konarehabib4-netizen/loyerfacile',
       demo: 'https://monloyerfacile.vercel.app',
+      etude: 'loyerfacile', // page « étude de cas » (texte dans src/data/etudes.js)
     },
     {
       title: 'Projet APP : prévention des inondations',

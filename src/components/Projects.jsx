@@ -48,8 +48,13 @@ export default function Projects() {
                   <T as="li" key={t}>{`#${t.toLowerCase().replace(/\s+/g, '-')}`}</T>
                 ))}
               </ul>
-              {(p.github || p.demo) && (
+              {(p.github || p.demo || p.etude) && (
                 <div className="project-links">
+                  {p.etude && (
+                    <a href={`#/etude/${p.etude}`} className="project-etude">
+                      <span className="c-prompt">$</span> cat etude-de-cas.md →
+                    </a>
+                  )}
                   {p.github && (
                     <a href={p.github} target="_blank" rel="noreferrer">
                       <span className="c-prompt">$</span> git clone ↗
