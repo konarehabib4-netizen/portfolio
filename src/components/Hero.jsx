@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { profile } from '../data/profile'
 import { initials, prefersReducedMotion, slugify } from '../helpers'
 import { Window } from '../utils'
 import Globe3D from './Globe3D'
+import Plateforme from './Plateforme'
+import Matrix from './Matrix'
 
 const SPEED = 38 // ms par caractère pendant l'intro
 
@@ -38,19 +41,25 @@ function buildIntro() {
 }
 
 // --- Les commandes que le visiteur peut taper -------------------------------
-function buildCommands(onToggleTheme) {
+function buildCommands(onToggleTheme, lancerJeu) {
   const { email, github, linkedin } = profile.contact
   const cmds = {
     help: {
       desc: 'affiche cette aide',
       run: (all) => (
         <span className="help-grid">
-          {Object.entries(all).map(([name, c]) => (
-            <span key={name}>
-              <span className="c-green">{name}</span>
-              <span className="c-muted">{c.desc}</span>
-            </span>
-          ))}
+          {Object.entries(all)
+            .filter(([, c]) => !c.cache)
+            .map(([name, c]) => (
+              <span key={name}>
+                <span className="c-green">{name}</span>
+                <span className="c-muted">{c.desc}</span>
+              </span>
+            ))}
+          <span>
+            <span className="c-purple">???</span>
+            <span className="c-muted">il existe aussi des commandes cachées… 👀 (indice : essayez de jouer)</span>
+          </span>
         </span>
       ),
     },
@@ -119,13 +128,52 @@ function buildCommands(onToggleTheme) {
       ),
     },
     clear: { desc: 'efface le terminal', run: () => null },
+    // --- Commandes cachées (absentes de « help ») ---
+    jouer: {
+      cache: true,
+      run: () => (lancerJeu('plateforme'), <span className="c-green">🎮 Lancement de dev-run.exe… bonne chance !</span>),
+    },
+    play: { cache: true, run: () => (lancerJeu('plateforme'), <span className="c-green">🎮 Lancement de dev-run.exe…</span>) },
+    mario: {
+      cache: true,
+      run: () => (
+        <span>
+          Pas de plombier ici 😄 mais un développeur qui saute très bien : tapez <span className="c-green">jouer</span>.
+        </span>
+      ),
+    },
+    matrix: {
+      cache: true,
+      run: () => (lancerJeu('matrix'), <span className="c-green">Wake up… 🟩</span>),
+    },
+    ls: {
+      cache: true,
+      run: () => (
+        <span className="ls">
+          <span className="c-cyan">projets/</span>
+          <span className="c-cyan">competences/</span>
+          <span>cv.pdf</span>
+          <span className="c-muted">.secrets</span>
+        </span>
+      ),
+    },
+    'cat .secrets': {
+      cache: true,
+      run: () => (
+        <span>
+          Commandes cachées : <span className="c-green">jouer</span>, <span className="c-green">matrix</span>,{' '}
+          <span className="c-green">sudo embauche</span>. Bravo d’avoir fouillé 🕵️
+        </span>
+      ),
+    },
   }
   return cmds
 }
 
 export default function Hero({ onToggleTheme }) {
   const intro = useMemo(() => buildIntro(), [])
-  const commands = useMemo(() => buildCommands(onToggleTheme), [onToggleTheme])
+  const [jeu, setJeu] = useState(null) // null | 'plateforme' | 'matrix'
+  const commands = useMemo(() => buildCommands(onToggleTheme, setJeu), [onToggleTheme])
   const instant = prefersReducedMotion()
 
   const [step, setStep] = useState(instant ? intro.length : 0) // lignes d'intro terminées
@@ -185,6 +233,11 @@ export default function Hero({ onToggleTheme }) {
     setHistory((h) => [...h, { id: Date.now(), cmd: value, out }])
   }
 
+  const quitterJeu = useCallback(() => {
+    setJeu(null)
+    setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 50)
+  }, [])
+
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
       run(input)
@@ -201,7 +254,7 @@ export default function Hero({ onToggleTheme }) {
       setInput(next >= 0 ? past[next] : '')
     } else if (e.key === 'Tab') {
       e.preventDefault()
-      const match = Object.keys(commands).find((c) => c.startsWith(input.toLowerCase()))
+      const match = Object.keys(commands).find((c) => !commands[c].cache && c.startsWith(input.toLowerCase()))
       if (input && match) setInput(match)
     }
   }
@@ -313,6 +366,9 @@ export default function Hero({ onToggleTheme }) {
           </p>
         </div>
       </div>
+      {/* Les jeux s'affichent par-dessus tout le site (portail vers <body>) */}
+      {jeu === 'plateforme' && createPortal(<Plateforme onQuit={quitterJeu} />, document.body)}
+      {jeu === 'matrix' && createPortal(<Matrix onQuit={quitterJeu} />, document.body)}
       <a href="#apropos" className="scroll-hint" aria-label="Défiler vers À propos">
         scroll <span>↓</span>
       </a>

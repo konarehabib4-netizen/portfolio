@@ -892,3 +892,81 @@ main, .footer { position: relative; z-index: 2; }
   .cs-phone-frame { width: 200px; }
   .cs-browser { transform: none; }
 }
+
+/* ---------- Mini-jeux cachés (Plateforme.jsx, Matrix.jsx) ---------- */
+.jeu-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(3, 5, 10, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: jeu-in 0.25s ease;
+}
+@keyframes jeu-in { from { opacity: 0; } }
+.jeu { width: min(820px, 100%); max-height: calc(100svh - 32px); overflow: auto; }
+.jeu .window-bar { position: relative; }
+.jeu-quitter {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.jeu-quitter:hover { color: var(--orange); }
+.jeu-body { padding: 12px 14px 14px; font-family: 'JetBrains Mono', monospace; }
+.jeu-hud { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+.jeu-ecran { position: relative; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; touch-action: none; }
+.jeu-ecran canvas { display: block; width: 100%; aspect-ratio: 480 / 264; image-rendering: pixelated; }
+.jeu-message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 16px;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+}
+.jeu-titre { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 800; color: var(--green); }
+.jeu-message p:not(.jeu-titre) { max-width: 420px; font-size: 0.9rem; }
+.jeu-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.jeu-pad { display: none; justify-content: space-between; align-items: center; margin-top: 12px; user-select: none; -webkit-user-select: none; }
+.jeu-pad > div { display: flex; gap: 10px; }
+.jeu-pad button {
+  width: 64px;
+  height: 56px;
+  font: inherit;
+  font-size: 1.2rem;
+  color: var(--green);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  touch-action: none;
+}
+.jeu-pad .jeu-saut { width: 96px; font-size: 0.95rem; font-weight: 800; color: var(--bg); background: var(--green); border-color: var(--green); }
+.jeu-pad button:active { filter: brightness(1.25); }
+.jeu-aide { font-size: 0.72rem; text-align: center; margin-top: 10px; }
+@media (pointer: coarse) {
+  .jeu-pad { display: flex; }
+  .jeu-aide { display: none; }
+}
+.matrix { position: fixed; inset: 0; z-index: 1001; width: 100vw; height: 100vh; cursor: pointer; }
+@media (max-width: 600px) {
+  .jeu-body { padding: 10px; }
+  .jeu-message { gap: 6px; padding: 8px; }
+  .jeu-titre { font-size: 1.05rem; }
+  .jeu-message p:not(.jeu-titre) { font-size: 0.72rem; line-height: 1.35; }
+  .jeu-message .btn { padding: 6px 12px; font-size: 0.8rem; }
+}
