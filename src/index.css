@@ -761,3 +761,21 @@ main, .footer { position: relative; z-index: 2; }
   .footer-inner { justify-content: center; text-align: center; }
   .aurora i { filter: blur(60px); }
 }
+
+/* Globe 3D derrière la photo (src/components/Globe3D.jsx) */
+.globe-3d {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 190%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-main { position: relative; z-index: 2; }
+.photo-window { position: relative; z-index: 1; }
+.float-badge { z-index: 2; }
+@media (max-width: 900px) {
+  .globe-3d { width: 150%; }
+}

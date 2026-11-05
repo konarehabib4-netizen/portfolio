@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { profile } from '../data/profile'
 import { initials, prefersReducedMotion, slugify } from '../helpers'
 import { Window } from '../utils'
+import Globe3D from './Globe3D'
 
 const SPEED = 38 // ms par caractère pendant l'intro
 
@@ -294,6 +295,7 @@ export default function Hero({ onToggleTheme }) {
 
         <div className="hero-side fade-up delay">
           <div className="photo-stack">
+            <Globe3D />
             <Window title={profile.photo || 'avatar.png'} className="photo-window">
               {profile.photo ? (
                 <img src={profile.photo} alt={`Photo de ${profile.name}`} />
