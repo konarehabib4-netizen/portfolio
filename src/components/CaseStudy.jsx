@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { etudes } from '../data/etudes'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { Reveal, Window } from '../utils'
 
 // Un bloc de l'étude de cas : petit numéro + commande façon terminal + titre.
@@ -31,21 +30,22 @@ function Telephone({ src, legende, delay }) {
 }
 
 export default function CaseStudy({ id }) {
+  const { profile, etudes, tr } = useLang()
   const e = etudes[id]
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = e ? `${e.titre} · étude de cas | ${profile.name}` : profile.name
+    document.title = e ? `${e.titre} · ${tr('étude de cas', 'case study')} | ${profile.name}` : profile.name
     return () => {
       document.title = `${profile.name} | Portfolio`
     }
-  }, [e])
+  }, [e, profile.name, tr])
 
   if (!e) {
     return (
       <main className="cs container">
-        <p className="cs-retour"><a href="#projets">← retour aux projets</a></p>
-        <h1>Étude introuvable</h1>
+        <p className="cs-retour"><a href="#projets">{tr('← retour aux projets', '← back to projects')}</a></p>
+        <h1>{tr('Étude introuvable', 'Case study not found')}</h1>
       </main>
     )
   }
@@ -56,11 +56,11 @@ export default function CaseStudy({ id }) {
         {/* --- En-tête ---------------------------------------------------- */}
         <header className="cs-hero fade-up">
           <p className="cs-retour">
-            <a href="#projets"><span className="c-prompt">$</span> cd ../projets</a>
+            <a href="#projets"><span className="c-prompt">$</span> {tr('cd ../projets', 'cd ../projects')}</a>
           </p>
           <p className="section-cmd">
-            <span className="c-muted">~/projets/</span>
-            <span className="c-cyan">{id}</span> <span className="c-muted">›</span> cat etude-de-cas.md
+            <span className="c-muted">{tr('~/projets/', '~/projects/')}</span>
+            <span className="c-cyan">{id}</span> <span className="c-muted">›</span> {tr('cat etude-de-cas.md', 'cat case-study.md')}
           </p>
           <h1 className="cs-titre">{e.titre}</h1>
           <p className="cs-accroche">{e.accroche}</p>
@@ -94,7 +94,7 @@ export default function CaseStudy({ id }) {
         </Reveal>
 
         {/* --- 1. Le problème -------------------------------------------- */}
-        <Bloc n="01" cmd="cat probleme.txt" titre="Le problème">
+        <Bloc n="01" cmd={tr('cat probleme.txt', 'cat problem.txt')} titre={tr('Le problème', 'The problem')}>
           <Reveal className="cs-probleme">
             <p>{e.probleme.intro}</p>
             <ul className="cs-liste">
@@ -107,7 +107,7 @@ export default function CaseStudy({ id }) {
         </Bloc>
 
         {/* --- 2. La solution -------------------------------------------- */}
-        <Bloc n="02" cmd="ls fonctionnalites/" titre="La solution">
+        <Bloc n="02" cmd={tr('ls fonctionnalites/', 'ls features/')} titre={tr('La solution', 'The solution')}>
           <div className="cs-phones">
             {e.captures.mobiles.map((c, i) => (
               <Telephone key={c.src} {...c} delay={i * 120} />
@@ -129,7 +129,7 @@ export default function CaseStudy({ id }) {
 
         {/* --- 3. Architecture ------------------------------------------- */}
         <Bloc n="03" cmd="tree architecture/" titre="Architecture">
-          <Reveal as="ol" className="cs-archi" aria-label="Chemin d'une requête, du téléphone à la base de données">
+          <Reveal as="ol" className="cs-archi" aria-label={tr('Chemin d’une requête, du téléphone à la base de données', 'Path of a request, from the phone to the database')}>
             {e.architecture.map((a) => (
               <li key={a.nom} className={`cs-noeud c-${a.couleur}`}>
                 <strong>{a.nom}</strong>
@@ -148,7 +148,7 @@ export default function CaseStudy({ id }) {
         </Bloc>
 
         {/* --- 4. Sécurité ----------------------------------------------- */}
-        <Bloc n="04" cmd="cat securite.md" titre="Sécurité">
+        <Bloc n="04" cmd={tr('cat securite.md', 'cat security.md')} titre={tr('Sécurité', 'Security')}>
           <Reveal as="ul" className="cs-securite">
             {e.securite.map((s) => (
               <li key={s}><span className="c-green">✔</span> {s}</li>
@@ -157,7 +157,7 @@ export default function CaseStudy({ id }) {
         </Bloc>
 
         {/* --- 5. Défis -------------------------------------------------- */}
-        <Bloc n="05" cmd="git log --grep=fix" titre="Défis et solutions">
+        <Bloc n="05" cmd="git log --grep=fix" titre={tr('Défis et solutions', 'Challenges and solutions')}>
           <div className="cs-defis">
             {e.defis.map((d, i) => (
               <Reveal key={d.probleme} className="cs-defi" delay={(i % 2) * 100}>
@@ -169,10 +169,10 @@ export default function CaseStudy({ id }) {
         </Bloc>
 
         {/* --- 6. Bilan -------------------------------------------------- */}
-        <Bloc n="06" cmd="cat bilan.md" titre="Ce que j’ai appris">
+        <Bloc n="06" cmd={tr('cat bilan.md', 'cat lessons.md')} titre={tr('Ce que j’ai appris', 'What I learned')}>
           <div className="cs-grille cs-bilan">
             <Reveal className="cs-carte">
-              <h3 className="c-green">Appris</h3>
+              <h3 className="c-green">{tr('Appris', 'Learned')}</h3>
               <ul className="cs-liste">
                 {e.appris.map((a) => (
                   <li key={a}>{a}</li>
@@ -180,7 +180,7 @@ export default function CaseStudy({ id }) {
               </ul>
             </Reveal>
             <Reveal className="cs-carte" delay={100}>
-              <h3 className="c-orange">Prochaines étapes</h3>
+              <h3 className="c-orange">{tr('Prochaines étapes', 'Next steps')}</h3>
               <ul className="cs-liste">
                 {e.suite.map((a) => (
                   <li key={a}>{a}</li>
@@ -191,15 +191,15 @@ export default function CaseStudy({ id }) {
         </Bloc>
 
         <Reveal className="cs-fin">
-          <p>Ce projet vous intéresse ? Essayez-le, ou parlons-en.</p>
+          <p>{tr('Ce projet vous intéresse ? Essayez-le, ou parlons-en.', 'Interested in this project? Try it, or let’s talk.')}</p>
           <div className="hero-buttons">
             {e.demo && (
               <a href={e.demo} className="btn btn-primary" target="_blank" rel="noreferrer">
                 <span className="c-prompt">$</span> open demo ↗
               </a>
             )}
-            <a href="#contact" className="btn btn-ghost">me contacter</a>
-            <a href="#projets" className="btn btn-link">← autres projets</a>
+            <a href="#contact" className="btn btn-ghost">{tr('me contacter', 'contact me')}</a>
+            <a href="#projets" className="btn btn-link">{tr('← autres projets', '← other projects')}</a>
           </div>
         </Reveal>
       </div>

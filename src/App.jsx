@@ -8,7 +8,7 @@ import Journey from './components/Journey'
 import Contact from './components/Contact'
 import Spotlight from './components/Spotlight'
 import CaseStudy from './components/CaseStudy'
-import { profile } from './data/profile'
+import { useLang } from './i18n'
 import { isTodo } from './helpers'
 
 // Thème initial : choix mémorisé, sinon préférence du système.
@@ -27,9 +27,10 @@ function getInitialTheme() {
 const etudeDepuisHash = () => window.location.hash.match(/^#\/etude\/([\w-]+)/)?.[1] || null
 
 const year = new Date().getFullYear()
-const displayName = isTodo(profile.name) ? 'Portfolio' : profile.name
 
 export default function App() {
+  const { profile, tr } = useLang()
+  const displayName = isTodo(profile.name) ? 'Portfolio' : profile.name
   const [theme, setTheme] = useState(getInitialTheme)
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
   const [etude, setEtude] = useState(etudeDepuisHash)
@@ -58,8 +59,8 @@ export default function App() {
   }, [theme])
 
   useEffect(() => {
-    document.title = isTodo(profile.name) ? 'Portfolio' : `${profile.name} | Portfolio`
-  }, [])
+    if (!etude) document.title = isTodo(profile.name) ? 'Portfolio' : `${profile.name} | Portfolio`
+  }, [profile.name, etude])
 
   return (
     <>
@@ -84,7 +85,7 @@ export default function App() {
             <span className="c-prompt">$</span> exit 0{' '}
             <span className="c-muted">{'// '}© {year} {displayName}</span>
           </span>
-          <span className="c-muted">conçu et codé avec React · fait à Abidjan 🇨🇮</span>
+          <span className="c-muted">{tr('conçu et codé avec React · fait à Abidjan 🇨🇮', 'designed and built with React · made in Abidjan 🇨🇮')}</span>
         </div>
       </footer>
     </>

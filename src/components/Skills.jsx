@@ -1,19 +1,20 @@
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { slugify } from '../helpers'
 import { Reveal, Section, Window } from '../utils'
 
 // Les compétences affichées comme un objet JavaScript, avec coloration syntaxique.
 export default function Skills() {
+  const { profile, tr } = useLang()
   const all = profile.skills.flatMap((g) => g.items)
 
   return (
-    <Section id="competences" index="02" cmd="cat competences.js" title="Compétences" comment="Les technologies avec lesquelles je travaille">
+    <Section id="competences" index="02" cmd={tr('cat competences.js', 'cat skills.js')} title={tr('Compétences', 'Skills')} comment={tr('Les technologies avec lesquelles je travaille', 'The technologies I work with')}>
       <div className="skills-layout">
         <Reveal>
-          <Window title="competences.js" className="editor">
+          <Window title={tr('competences.js', 'skills.js')} className="editor">
             <ol className="code-lines">
               <li>
-                <span className="c-purple">const</span> <span className="c-cyan">competences</span>{' '}
+                <span className="c-purple">const</span> <span className="c-cyan">{tr('competences', 'skills')}</span>{' '}
                 <span className="c-muted">=</span> {'{'}
               </li>
               {profile.skills.map((group) => (

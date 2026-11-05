@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 
 // Mini-jeu caché (commande « jouer ») : un jeu de plateforme original.
 // Un petit développeur court, saute, ramasse mes technologies, écrase des bugs
@@ -15,7 +15,6 @@ const GRAVITE = 0.55
 const VITESSE = 2.6
 const SAUT = -9.6
 const VIES = 3
-const TECHS = profile.skills.flatMap((g) => g.items)
 
 // --- Le niveau, construit case par case -------------------------------------
 // # sol · = plateforme · C bloc de code (donne une techno) · B bloc vidé · o techno
@@ -80,6 +79,12 @@ function partieNeuve() {
 }
 
 export default function Plateforme({ onQuit }) {
+  const { profile, tr } = useLang()
+  // La boucle du jeu lit la langue via une ref (elle est créée une seule fois)
+  const langue = useRef({ tr, techs: [] })
+  useEffect(() => {
+    langue.current = { tr, techs: profile.skills.flatMap((g) => g.items) }
+  }, [tr, profile])
   const canvasRef = useRef(null)
   // État du jeu (modifié 60 fois par seconde) : gardé dans une ref, pas dans le state React
   const jeu = useRef(null)
@@ -180,7 +185,7 @@ export default function Plateforme({ onQuit }) {
         if (j.vy > 0 && j.y + j.h - e.y < 12) {
           e.mort = 1
           j.vy = -6.5
-          g.textes.push({ x: e.x + e.w / 2, y: e.y, texte: 'bug corrigé ✔', vie: 50, couleur: 'green' })
+          g.textes.push({ x: e.x + e.w / 2, y: e.y, texte: langue.current.tr('bug corrigé ✔', 'bug fixed ✔'), vie: 50, couleur: 'green' })
         } else if (!j.invincible) {
           blesser(g)
         }
@@ -201,7 +206,8 @@ export default function Plateforme({ onQuit }) {
   }
 
   const ramasser = (g, x, y) => {
-    const tech = TECHS[g.ramasses % TECHS.length]
+    const { techs } = langue.current
+    const tech = techs.length ? techs[g.ramasses % techs.length] : '{}'
     g.ramasses++
     g.textes.push({ x, y, texte: `+${tech}`, vie: 45, couleur: 'cyan' })
     majHud()
@@ -514,31 +520,39 @@ export default function Plateforme({ onQuit }) {
   }
 
   const messages = {
-    pret: { titre: 'dev-run.exe', texte: 'Ramassez mes technologies, sautez sur les bugs et atteignez le drapeau du stage !', bouton: 'Jouer' },
-    pause: { titre: 'Pause', texte: 'Appuyez sur P pour reprendre.', bouton: 'Reprendre' },
-    perdu: { titre: 'Game over', texte: `${hud.ramasses} / ${hud.total} technologies ramassées. Les bugs ont gagné cette fois…`, bouton: 'Rejouer' },
+    pret: {
+      titre: 'dev-run.exe',
+      texte: tr('Ramassez mes technologies, sautez sur les bugs et atteignez le drapeau du stage !', 'Collect my skills, stomp the bugs and reach the internship flag!'),
+      bouton: tr('Jouer', 'Play'),
+    },
+    pause: { titre: 'Pause', texte: tr('Appuyez sur P pour reprendre.', 'Press P to resume.'), bouton: tr('Reprendre', 'Resume') },
+    perdu: {
+      titre: 'Game over',
+      texte: tr(`${hud.ramasses} / ${hud.total} technologies ramassées. Les bugs ont gagné cette fois…`, `${hud.ramasses} / ${hud.total} skills collected. The bugs won this time…`),
+      bouton: tr('Rejouer', 'Play again'),
+    },
     gagne: {
-      titre: 'Stage décroché ! 🎉',
-      texte: `${hud.ramasses} / ${hud.total} technologies ramassées. Et si on en parlait pour de vrai ?`,
-      bouton: 'Rejouer',
+      titre: tr('Stage décroché ! 🎉', 'Internship landed! 🎉'),
+      texte: tr(`${hud.ramasses} / ${hud.total} technologies ramassées. Et si on en parlait pour de vrai ?`, `${hud.ramasses} / ${hud.total} skills collected. Shall we talk about it for real?`),
+      bouton: tr('Rejouer', 'Play again'),
     },
   }
   const m = messages[statut]
 
   return (
-    <div className="jeu-fond" role="dialog" aria-modal="true" aria-label="Mini-jeu de plateforme" onClick={onQuit}>
+    <div className="jeu-fond" role="dialog" aria-modal="true" aria-label={tr('Mini-jeu de plateforme', 'Platform mini-game')} onClick={onQuit}>
       <div className="window jeu" onClick={(e) => e.stopPropagation()}>
         <div className="window-bar">
           <span className="dots" aria-hidden="true"><i /><i /><i /></span>
-          <span className="window-title">~/jeux/dev-run.exe</span>
-          <button type="button" className="jeu-quitter" onClick={onQuit} aria-label="Quitter le jeu">✕</button>
+          <span className="window-title">{tr('~/jeux/dev-run.exe', '~/games/dev-run.exe')}</span>
+          <button type="button" className="jeu-quitter" onClick={onQuit} aria-label={tr('Quitter le jeu', 'Quit the game')}>✕</button>
         </div>
         <div className="jeu-body">
           <div className="jeu-hud">
             <span>
               <span className="c-cyan">{'{}'}</span> {hud.ramasses}/{hud.total}
             </span>
-            <span className="c-orange" aria-label={`${hud.vies} vies`}>
+            <span className="c-orange" aria-label={tr(`${hud.vies} vies`, `${hud.vies} lives`)}>
               {'♥'.repeat(Math.max(0, hud.vies))}
               <span className="c-muted">{'♥'.repeat(Math.max(0, VIES - hud.vies))}</span>
             </span>
@@ -554,7 +568,7 @@ export default function Plateforme({ onQuit }) {
                     <span className="c-prompt">$</span> {m.bouton}
                   </button>
                   {statut === 'gagne' && (
-                    <button type="button" className="btn btn-ghost" onClick={allerContact}>me contacter</button>
+                    <button type="button" className="btn btn-ghost" onClick={allerContact}>{tr('me contacter', 'contact me')}</button>
                   )}
                 </div>
               </div>
@@ -562,12 +576,12 @@ export default function Plateforme({ onQuit }) {
           </div>
           <div className="jeu-pad">
             <div>
-              <button type="button" aria-label="Gauche" {...bouton('gauche')}>◀</button>
-              <button type="button" aria-label="Droite" {...bouton('droite')}>▶</button>
+              <button type="button" aria-label={tr('Gauche', 'Left')} {...bouton('gauche')}>◀</button>
+              <button type="button" aria-label={tr('Droite', 'Right')} {...bouton('droite')}>▶</button>
             </div>
-            <button type="button" className="jeu-saut" aria-label="Sauter" {...bouton('saut')}>saut</button>
+            <button type="button" className="jeu-saut" aria-label={tr('Sauter', 'Jump')} {...bouton('saut')}>{tr('saut', 'jump')}</button>
           </div>
-          <p className="jeu-aide c-muted">← → courir · espace sauter · P pause · échap quitter</p>
+          <p className="jeu-aide c-muted">{tr('← → courir · espace sauter · P pause · échap quitter', '← → run · space jump · P pause · esc quit')}</p>
         </div>
       </div>
     </div>

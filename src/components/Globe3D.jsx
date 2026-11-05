@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { prefersReducedMotion } from '../helpers'
 
 // Globe 3D dessiné à la main sur un <canvas> (aucune bibliothèque) :
@@ -8,7 +8,6 @@ import { prefersReducedMotion } from '../helpers'
 // si le visiteur a demandé « moins d'animations ».
 
 const NB_POINTS = 420
-const TECHS = profile.skills.flatMap((g) => g.items).filter((t) => t.length <= 10).slice(0, 10)
 
 // Points répartis régulièrement sur la sphère (spirale de Fibonacci)
 const SPHERE = Array.from({ length: NB_POINTS }, (_, i) => {
@@ -31,9 +30,12 @@ const couleur = (nom) => getComputedStyle(document.documentElement).getPropertyV
 
 export default function Globe3D() {
   const ref = useRef(null)
+  const { profile } = useLang()
+  const listeTechs = profile.skills.flatMap((g) => g.items).filter((t) => t.length <= 10).slice(0, 10).join('|')
 
   useEffect(() => {
     const canvas = ref.current
+    const TECHS = listeTechs.split('|')
     const ctx = canvas.getContext('2d')
     const fige = prefersReducedMotion()
     // Tout ce qui change pendant l'animation est rangé dans un seul objet
@@ -170,7 +172,7 @@ export default function Globe3D() {
       window.removeEventListener('pointermove', surSouris)
       document.removeEventListener('visibilitychange', relancer)
     }
-  }, [])
+  }, [listeTechs])
 
   return <canvas ref={ref} className="globe-3d" aria-hidden="true" />
 }

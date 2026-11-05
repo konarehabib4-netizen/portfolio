@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 
 // Commande cachée « matrix » : pluie de caractères verts plein écran.
 // S'arrête toute seule après quelques secondes, ou au clic / à une touche.
@@ -8,13 +8,14 @@ const CARACTERES = 'アカサタナハマヤラワ0123456789<>/{}=+*#$'
 
 export default function Matrix({ onQuit }) {
   const ref = useRef(null)
+  const { profile, tr } = useLang()
+  const message = ` ${profile.name.toUpperCase()} · ${tr('DISPONIBLE POUR UN STAGE', 'OPEN TO INTERNSHIPS')} `
 
   useEffect(() => {
     const canvas = ref.current
     const ctx = canvas.getContext('2d')
     const vert = getComputedStyle(document.documentElement).getPropertyValue('--green').trim() || '#3ddc84'
     const taille = 16
-    const message = ` ${profile.name.toUpperCase()} · DISPONIBLE POUR UN STAGE `
     const e = { colonnes: [], largeur: 0, hauteur: 0, id: 0 } // état de l'animation
 
     const redim = () => {
@@ -68,7 +69,7 @@ export default function Matrix({ onQuit }) {
       window.removeEventListener('resize', redim)
       window.removeEventListener('keydown', quitter)
     }
-  }, [onQuit])
+  }, [onQuit, message])
 
-  return <canvas ref={ref} className="matrix" onClick={onQuit} role="img" aria-label="Pluie de caractères façon Matrix" />
+  return <canvas ref={ref} className="matrix" onClick={onQuit} role="img" aria-label={tr('Pluie de caractères façon Matrix', 'Matrix-style character rain')} />
 }

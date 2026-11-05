@@ -1,4 +1,4 @@
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { slugify } from '../helpers'
 import { Reveal, Section, T } from '../utils'
 
@@ -19,12 +19,13 @@ function reset(e) {
 }
 
 export default function Projects() {
+  const { profile, tr } = useLang()
   return (
-    <Section id="projets" index="03" cmd="ls -la projets/" title="Projets" comment="Une sélection de ce que j’ai réalisé">
+    <Section id="projets" index="03" cmd={tr('ls -la projets/', 'ls -la projects/')} title={tr('Projets', 'Projects')} comment={tr('Une sélection de ce que j’ai réalisé', 'A selection of what I have built')}>
       <div className="projects-grid">
         {profile.projects.map((p, i) => {
-          const inProgress = p.tags.some((t) => /en cours/i.test(t))
-          const tags = p.tags.filter((t) => !/en cours/i.test(t))
+          const inProgress = p.tags.some((t) => /en cours|in progress/i.test(t))
+          const tags = p.tags.filter((t) => !/en cours|in progress/i.test(t))
           return (
             <Reveal
               key={p.title}
@@ -35,10 +36,10 @@ export default function Projects() {
               onMouseLeave={reset}
             >
               <div className="project-path">
-                <span className="c-muted">~/projets/</span>
+                <span className="c-muted">{tr('~/projets/', '~/projects/')}</span>
                 <span className="c-cyan">{slugify(p.title)}</span>
                 <span className={`status ${inProgress ? 'wip' : 'ok'}`}>
-                  {inProgress ? '◐ en cours' : '● terminé'}
+                  {inProgress ? tr('◐ en cours', '◐ in progress') : tr('● terminé', '● done')}
                 </span>
               </div>
               <h3>{p.title}</h3>
@@ -52,7 +53,7 @@ export default function Projects() {
                 <div className="project-links">
                   {p.etude && (
                     <a href={`#/etude/${p.etude}`} className="project-etude">
-                      <span className="c-prompt">$</span> cat etude-de-cas.md →
+                      <span className="c-prompt">$</span> {tr('cat etude-de-cas.md →', 'cat case-study.md →')}
                     </a>
                   )}
                   {p.github && (

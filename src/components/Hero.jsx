@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { initials, prefersReducedMotion, slugify } from '../helpers'
 import { Window } from '../utils'
 import Globe3D from './Globe3D'
@@ -13,14 +13,14 @@ const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior:
 const openUrl = (url) => url && window.open(url, '_blank', 'noopener')
 
 // --- L'intro jouée automatiquement -----------------------------------------
-function buildIntro() {
+function buildIntro(profile, tr) {
   const techs = profile.skills.flatMap((g) => g.items).slice(0, 8)
   return [
     { cmd: 'whoami', out: <span className="hero-name">{profile.name}</span> },
     { cmd: 'cat role.txt', out: <span className="c-orange">{profile.title}</span> },
     { cmd: 'cat bio.txt', out: <span>{profile.tagline}</span> },
     {
-      cmd: 'ls competences/',
+      cmd: tr('ls competences/', 'ls skills/'),
       out: (
         <span className="ls">
           {techs.map((t) => (
@@ -30,7 +30,7 @@ function buildIntro() {
       ),
     },
     {
-      cmd: './statut.sh',
+      cmd: tr('./statut.sh', './status.sh'),
       out: (
         <span className="c-green">
           <span className="pulse" /> {profile.available}
@@ -41,31 +41,36 @@ function buildIntro() {
 }
 
 // --- Les commandes que le visiteur peut taper -------------------------------
-function buildCommands(onToggleTheme, lancerJeu) {
+// Chaque commande a un nom français et, si besoin, un nom anglais (en) :
+// les deux marchent toujours, « help » affiche ceux de la langue choisie.
+function buildCommands(profile, tr, onToggleTheme, lancerJeu) {
   const { email, github, linkedin } = profile.contact
   const cmds = {
     help: {
-      desc: 'affiche cette aide',
+      desc: tr('affiche cette aide', 'show this help'),
       run: (all) => (
         <span className="help-grid">
           {Object.entries(all)
             .filter(([, c]) => !c.cache)
             .map(([name, c]) => (
               <span key={name}>
-                <span className="c-green">{name}</span>
+                <span className="c-green">{tr(name, c.en || name)}</span>
                 <span className="c-muted">{c.desc}</span>
               </span>
             ))}
           <span>
             <span className="c-purple">???</span>
-            <span className="c-muted">il existe aussi des commandes cachées… 👀 (indice : essayez de jouer)</span>
+            <span className="c-muted">
+              {tr('il existe aussi des commandes cachées… 👀 (indice : essayez de jouer)', 'there are hidden commands too… 👀 (hint: try to play)')}
+            </span>
           </span>
         </span>
       ),
     },
-    whoami: { desc: 'qui suis-je ?', run: () => `${profile.name} · ${profile.title}` },
+    whoami: { desc: tr('qui suis-je ?', 'who am I?'), run: () => `${profile.name} · ${profile.title}` },
     projets: {
-      desc: 'liste mes projets',
+      en: 'projects',
+      desc: tr('liste mes projets', 'list my projects'),
       run: () => {
         setTimeout(() => scrollTo('projets'), 900)
         return (
@@ -78,29 +83,32 @@ function buildCommands(onToggleTheme, lancerJeu) {
       },
     },
     competences: {
-      desc: 'mes technologies',
+      en: 'skills',
+      desc: tr('mes technologies', 'my tech stack'),
       run: () => profile.skills.map((g) => `${g.category} : ${g.items.join(', ')}`).join('\n'),
     },
     parcours: {
-      desc: 'formation et expériences',
+      en: 'journey',
+      desc: tr('formation et expériences', 'education and experience'),
       run: () => {
         setTimeout(() => scrollTo('parcours'), 900)
         return [...profile.experience, ...profile.education].map((e) => `› ${e.title} (${e.place})`).join('\n')
       },
     },
     cv: {
-      desc: 'télécharge mon CV (PDF)',
+      en: 'resume',
+      desc: tr('télécharge mon CV (PDF)', 'download my resume (PDF, in French)'),
       run: () => {
-        if (!profile.cv) return 'CV bientôt disponible.'
+        if (!profile.cv) return tr('CV bientôt disponible.', 'Resume coming soon.')
         const a = document.createElement('a')
         a.href = profile.cv
         a.download = ''
         a.click()
-        return <span className="c-green">✔ Téléchargement de {profile.cv} lancé.</span>
+        return <span className="c-green">{tr(`✔ Téléchargement de ${profile.cv} lancé.`, `✔ Downloading ${profile.cv}…`)}</span>
       },
     },
     contact: {
-      desc: 'mes coordonnées',
+      desc: tr('mes coordonnées', 'my contact details'),
       run: () => (
         <span className="contact-out">
           <a href={`mailto:${email}`}>{email}</a>
@@ -109,36 +117,39 @@ function buildCommands(onToggleTheme, lancerJeu) {
       ),
     },
     email: {
-      desc: 'm’écrire un email',
+      desc: tr('m’écrire un email', 'send me an email'),
       run: () => {
         window.location.href = `mailto:${email}`
-        return `Ouverture de votre messagerie vers ${email}…`
+        return tr(`Ouverture de votre messagerie vers ${email}…`, `Opening your mail app to ${email}…`)
       },
     },
-    github: { desc: 'ouvre mon GitHub', run: () => (openUrl(github), `→ ${github}`) },
-    linkedin: { desc: 'ouvre mon LinkedIn', run: () => (openUrl(linkedin), `→ ${linkedin}`) },
-    theme: { desc: 'mode clair / sombre', run: () => (onToggleTheme(), 'Thème changé ✨') },
+    github: { desc: tr('ouvre mon GitHub', 'open my GitHub'), run: () => (openUrl(github), `→ ${github}`) },
+    linkedin: { desc: tr('ouvre mon LinkedIn', 'open my LinkedIn'), run: () => (openUrl(linkedin), `→ ${linkedin}`) },
+    theme: { desc: tr('mode clair / sombre', 'light / dark mode'), run: () => (onToggleTheme(), tr('Thème changé ✨', 'Theme switched ✨')) },
     embauche: {
-      desc: 'la meilleure commande 😉',
+      en: 'hire',
+      desc: tr('la meilleure commande 😉', 'the best command 😉'),
       run: () => (
         <span>
-          <span className="c-green">✔ Excellente décision !</span> Je suis disponible pour un stage.{' '}
-          Écrivez-moi à <a href={`mailto:${email}`}>{email}</a>.
+          <span className="c-green">{tr('✔ Excellente décision !', '✔ Great decision!')}</span>{' '}
+          {tr('Je suis disponible pour un stage. Écrivez-moi à', 'I am available for an internship. Write to me at')}{' '}
+          <a href={`mailto:${email}`}>{email}</a>.
         </span>
       ),
     },
-    clear: { desc: 'efface le terminal', run: () => null },
+    clear: { desc: tr('efface le terminal', 'clear the terminal'), run: () => null },
     // --- Commandes cachées (absentes de « help ») ---
     jouer: {
+      en: 'play',
       cache: true,
-      run: () => (lancerJeu('plateforme'), <span className="c-green">🎮 Lancement de dev-run.exe… bonne chance !</span>),
+      run: () => (lancerJeu('plateforme'), <span className="c-green">{tr('🎮 Lancement de dev-run.exe… bonne chance !', '🎮 Launching dev-run.exe… good luck!')}</span>),
     },
-    play: { cache: true, run: () => (lancerJeu('plateforme'), <span className="c-green">🎮 Lancement de dev-run.exe…</span>) },
     mario: {
       cache: true,
       run: () => (
         <span>
-          Pas de plombier ici 😄 mais un développeur qui saute très bien : tapez <span className="c-green">jouer</span>.
+          {tr('Pas de plombier ici 😄 mais un développeur qui saute très bien : tapez', 'No plumber here 😄 but a developer who jumps really well: type')}{' '}
+          <span className="c-green">{tr('jouer', 'play')}</span>.
         </span>
       ),
     },
@@ -150,8 +161,8 @@ function buildCommands(onToggleTheme, lancerJeu) {
       cache: true,
       run: () => (
         <span className="ls">
-          <span className="c-cyan">projets/</span>
-          <span className="c-cyan">competences/</span>
+          <span className="c-cyan">{tr('projets/', 'projects/')}</span>
+          <span className="c-cyan">{tr('competences/', 'skills/')}</span>
           <span>cv.pdf</span>
           <span className="c-muted">.secrets</span>
         </span>
@@ -161,19 +172,23 @@ function buildCommands(onToggleTheme, lancerJeu) {
       cache: true,
       run: () => (
         <span>
-          Commandes cachées : <span className="c-green">jouer</span>, <span className="c-green">matrix</span>,{' '}
-          <span className="c-green">sudo embauche</span>. Bravo d’avoir fouillé 🕵️
+          {tr('Commandes cachées :', 'Hidden commands:')} <span className="c-green">{tr('jouer', 'play')}</span>,{' '}
+          <span className="c-green">matrix</span>, <span className="c-green">{tr('sudo embauche', 'sudo hire')}</span>.{' '}
+          {tr('Bravo d’avoir fouillé 🕵️', 'Nice digging 🕵️')}
         </span>
       ),
     },
   }
+  // Les noms anglais (projects, skills, hire, play…) lancent la même commande, en restant hors de « help »
+  for (const c of Object.values({ ...cmds })) if (c.en && !cmds[c.en]) cmds[c.en] = { ...c, cache: true }
   return cmds
 }
 
 export default function Hero({ onToggleTheme }) {
-  const intro = useMemo(() => buildIntro(), [])
+  const { profile, tr } = useLang()
+  const intro = useMemo(() => buildIntro(profile, tr), [profile, tr])
   const [jeu, setJeu] = useState(null) // null | 'plateforme' | 'matrix'
-  const commands = useMemo(() => buildCommands(onToggleTheme, setJeu), [onToggleTheme])
+  const commands = useMemo(() => buildCommands(profile, tr, onToggleTheme, setJeu), [profile, tr, onToggleTheme])
   const instant = prefersReducedMotion()
 
   const [step, setStep] = useState(instant ? intro.length : 0) // lignes d'intro terminées
@@ -226,8 +241,8 @@ export default function Hero({ onToggleTheme }) {
       ? command.run(commands)
       : (
           <span>
-            <span className="c-orange">commande introuvable : {value}</span>. Tapez{' '}
-            <span className="c-green">help</span> pour voir les commandes.
+            <span className="c-orange">{tr('commande introuvable :', 'command not found:')} {value}</span>.{' '}
+            {tr('Tapez', 'Type')} <span className="c-green">help</span> {tr('pour voir les commandes.', 'to see the commands.')}
           </span>
         )
     setHistory((h) => [...h, { id: Date.now(), cmd: value, out }])
@@ -268,7 +283,7 @@ export default function Hero({ onToggleTheme }) {
     if (!window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true })
   }
 
-  const suggestions = ['help', 'projets', 'cv', 'embauche']
+  const suggestions = tr(['help', 'projets', 'cv', 'embauche'], ['help', 'projects', 'resume', 'hire'])
 
   return (
     <section id="accueil" className="hero">
@@ -311,8 +326,8 @@ export default function Hero({ onToggleTheme }) {
                     spellCheck="false"
                     autoComplete="off"
                     autoCapitalize="off"
-                    aria-label="Tapez une commande (essayez help)"
-                    placeholder="tapez « help » puis Entrée…"
+                    aria-label={tr('Tapez une commande (essayez help)', 'Type a command (try help)')}
+                    placeholder={tr('tapez « help » puis Entrée…', 'type “help” then Enter…')}
                   />
                 </label>
               ) : (
@@ -322,11 +337,11 @@ export default function Hero({ onToggleTheme }) {
                 </p>
               )}
             </div>
-            {!done && <span className="term-hint">cliquer pour passer ↵</span>}
+            {!done && <span className="term-hint">{tr('cliquer pour passer ↵', 'click to skip ↵')}</span>}
           </Window>
 
           <div className={`term-chips ${done ? 'show' : ''}`}>
-            <span className="c-muted">essayez :</span>
+            <span className="c-muted">{tr('essayez :', 'try:')}</span>
             {suggestions.map((s) => (
               <button key={s} type="button" onClick={() => run(s)}>
                 {s}
@@ -336,11 +351,11 @@ export default function Hero({ onToggleTheme }) {
 
           <div className="hero-buttons">
             <a href="#projets" className="btn btn-primary">
-              <span className="c-prompt">$</span> voir mes projets
+              <span className="c-prompt">$</span> {tr('voir mes projets', 'see my projects')}
             </a>
             {profile.cv && (
               <a href={profile.cv} className="btn btn-ghost" download>
-                ⬇ télécharger mon CV
+                ⬇ {tr('télécharger mon CV', 'download my resume')}
               </a>
             )}
           </div>
@@ -351,7 +366,7 @@ export default function Hero({ onToggleTheme }) {
             <Globe3D />
             <Window title={profile.photo || 'avatar.png'} className="photo-window">
               {profile.photo ? (
-                <img src={profile.photo} alt={`Photo de ${profile.name}`} />
+                <img src={profile.photo} alt={tr(`Photo de ${profile.name}`, `Photo of ${profile.name}`)} />
               ) : (
                 <span className="photo-initials">{initials(profile.name)}</span>
               )}
@@ -369,7 +384,7 @@ export default function Hero({ onToggleTheme }) {
       {/* Les jeux s'affichent par-dessus tout le site (portail vers <body>) */}
       {jeu === 'plateforme' && createPortal(<Plateforme onQuit={quitterJeu} />, document.body)}
       {jeu === 'matrix' && createPortal(<Matrix onQuit={quitterJeu} />, document.body)}
-      <a href="#apropos" className="scroll-hint" aria-label="Défiler vers À propos">
+      <a href="#apropos" className="scroll-hint" aria-label={tr('Défiler vers À propos', 'Scroll to About')}>
         scroll <span>↓</span>
       </a>
     </section>

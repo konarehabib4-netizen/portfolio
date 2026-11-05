@@ -1,12 +1,13 @@
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 import { CountUp, Reveal, Section, T, Window } from '../utils'
 
 export default function About() {
+  const { profile, tr } = useLang()
   return (
-    <Section id="apropos" index="01" cmd="cat a-propos.md" title="À propos" comment="Qui je suis et ce qui me motive">
+    <Section id="apropos" index="01" cmd={tr('cat a-propos.md', 'cat about.md')} title={tr('À propos', 'About')} comment={tr('Qui je suis et ce qui me motive', 'Who I am and what drives me')}>
       <div className="about-grid">
         <Reveal>
-          <Window title="a-propos.md" className="editor">
+          <Window title={tr('a-propos.md', 'about.md')} className="editor">
             <ol className="code-lines">
               <li><span className="c-purple"># </span><span className="c-heading">{profile.name}</span></li>
               <li />

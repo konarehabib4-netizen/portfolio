@@ -970,3 +970,21 @@ main, .footer { position: relative; z-index: 2; }
   .jeu-message p:not(.jeu-titre) { font-size: 0.72rem; line-height: 1.35; }
   .jeu-message .btn { padding: 6px 12px; font-size: 0.8rem; }
 }
+
+/* Bouton de langue FR | EN (Navbar.jsx) */
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 4px;
+  gap: 2px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font: 700 0.75rem 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+.lang-btn span { padding: 4px 6px; border-radius: 7px; transition: background-color 0.2s, color 0.2s; }
+.lang-btn span.on { background: var(--green); color: var(--bg); }
+.lang-btn:hover { border-color: var(--green); }

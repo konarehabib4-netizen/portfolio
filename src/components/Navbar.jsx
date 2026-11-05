@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
-import { profile } from '../data/profile'
+import { useLang } from '../i18n'
 
+// Les identifiants (#apropos…) restent en français : seuls les libellés changent.
 const links = [
-  { id: 'apropos', label: 'a-propos' },
-  { id: 'competences', label: 'competences' },
-  { id: 'projets', label: 'projets' },
-  { id: 'parcours', label: 'parcours' },
-  { id: 'contact', label: 'contact' },
+  { id: 'apropos', label: 'a-propos', en: 'about' },
+  { id: 'competences', label: 'competences', en: 'skills' },
+  { id: 'projets', label: 'projets', en: 'projects' },
+  { id: 'parcours', label: 'parcours', en: 'journey' },
+  { id: 'contact', label: 'contact', en: 'contact' },
 ]
 
 export default function Navbar({ theme, onToggleTheme }) {
+  const { profile, tr, lang, basculer } = useLang()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState('')
@@ -49,11 +51,11 @@ export default function Navbar({ theme, onToggleTheme }) {
         </a>
 
         <ul className={`nav-links ${open ? 'open' : ''}`}>
-          {links.map(({ id, label }) => (
+          {links.map(({ id, label, en }) => (
             <li key={id}>
               <a href={`#${id}`} className={active === id ? 'active' : ''} onClick={close}>
                 <span className="c-muted">./</span>
-                {label}
+                {tr(label, en)}
               </a>
             </li>
           ))}
@@ -61,15 +63,24 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         <div className="nav-actions">
           {profile.cv && (
-            <a href={profile.cv} download className="nav-cv" title="Télécharger mon CV (PDF)">
+            <a href={profile.cv} download className="nav-cv" title={tr('Télécharger mon CV (PDF)', 'Download my resume (PDF)')}>
               ⬇ <span>cv.pdf</span>
             </a>
           )}
           <button
+            className="lang-btn"
+            onClick={basculer}
+            aria-label={tr('Switch to English', 'Passer en français')}
+            title={tr('English version', 'Version française')}
+          >
+            <span className={lang === 'fr' ? 'on' : ''}>FR</span>
+            <span className={lang === 'en' ? 'on' : ''}>EN</span>
+          </button>
+          <button
             className="icon-btn"
             onClick={onToggleTheme}
-            aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
-            title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            aria-label={theme === 'dark' ? tr('Passer en mode clair', 'Switch to light mode') : tr('Passer en mode sombre', 'Switch to dark mode')}
+            title={theme === 'dark' ? tr('Mode clair', 'Light mode') : tr('Mode sombre', 'Dark mode')}
           >
             {theme === 'dark' ? '☀' : '☾'}
           </button>
