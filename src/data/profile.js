@@ -65,10 +65,10 @@ export const profile = {
     {
       title: 'LoyerFacile',
       description:
-        'Application web de gestion locative pour propriétaires : immeubles, logements, locataires et suivi des paiements de loyer. Front-end React (Vite), API REST Node.js / Express sécurisée par JWT, base de données MySQL.',
-      tags: ['En cours', 'React', 'Node.js', 'Express', 'MySQL', 'JWT'],
+        'Application de gestion locative en ligne, installable sur téléphone (PWA). Côté propriétaire : biens, locataires, loyers, cautions et décompte de sortie. Côté locataire : espace personnel avec ses mois impayés et la déclaration de paiement (Wave, Orange Money…). Relances et reçus par WhatsApp. React (Vite), API Node.js / Express sécurisée par JWT et rôles, MySQL hébergé (Aiven), déployé sur Vercel.',
+      tags: ['React', 'Node.js', 'Express', 'MySQL', 'JWT', 'PWA', 'Vercel'],
       github: 'https://github.com/konarehabib4-netizen/loyerfacile',
-      demo: '',
+      demo: 'https://monloyerfacile.vercel.app',
     },
     {
       title: 'Projet APP : prévention des inondations',
